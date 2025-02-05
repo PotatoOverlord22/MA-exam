@@ -4,8 +4,8 @@ import { ActivityIndicator, List, Text } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
 import { useServices } from "../../Providers/servicesProvider";
 import { CustomResponse } from "../../Models/CustomResponse";
-import { Transaction } from "../../Models/Transaction";
-import { entityListStyles } from "../TransactionList/transactionList.styles";
+import { Book } from "../../Models/Book";
+import { entityListStyles } from "../BookList/bookList.styles";
 import { useFocusEffect } from "@react-navigation/native";
 
 export const Reports: React.FC = (): JSX.Element => {
@@ -27,7 +27,7 @@ export const Reports: React.FC = (): JSX.Element => {
     const fetchMonthlySpending = async (): Promise<void> => {
         setIsLoading(true);
         try {
-            const response: CustomResponse<Transaction[]> = await services.TransactionService.GetAllCustomPages();
+            const response: CustomResponse<Book[]> = await services.BookService.GetAllCustomPages();
             const monthSpending: Record<string, number> = {};
 
             // Calculate total spending per month

@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { InternalRoutes } from "../../Library/Enums/InternalRoutes";
 import { StackParamList } from "../../Library/routeParams";
-import { TransactionEdit } from "../TransactionEdit/transactionEdit";
+import { BookEdit } from "../BookEdit/bookEdit";
 import { TabNavigator } from "./tabNavigator";
 
 const StackNavigator = createNativeStackNavigator<StackParamList>();
@@ -18,7 +18,7 @@ export const ParentStackNavigator: React.FC = (): JSX.Element => {
             />
             <StackNavigator.Screen
                 name={InternalRoutes.Edit}
-                component={TransactionEdit}
+                component={BookEdit}
                 options={{
                     headerShown: false
                 }}

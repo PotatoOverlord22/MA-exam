@@ -1,17 +1,17 @@
 import { StyleSheet } from "react-native";
 import { EdgeInsets } from "react-native-safe-area-context";
 
-export const CREATE_TITLE: string = "Create Transaction";
-export const EDIT_TITLE: string = "Edit Transaction";
-export const VIEW_TITLE: string = "View Transaction details";
+export const CREATE_TITLE: string = "Create Book";
+export const EDIT_TITLE: string = "Edit Book";
+export const VIEW_TITLE: string = "View Book details";
 export const SELECT_DATE: string = "Select creation date";
 export const SAVE: string = "Save";
 export const CANCEL: string = "Cancel";
 
-export const CREATE_SUCCESSFUL_MESSAGE: string = "Successfully created Transaction";
-export const EDIT_SUCCESSFUL_MESSAGE: string = "Successfully edited Transaction";
-export const SAVE_FAILED_MESSAGE: string = "Failed to save Transaction";
-export const FETCH_FAILED_MESSAGE: string = "Failed to fetch Transaction";
+export const CREATE_SUCCESSFUL_MESSAGE: string = "Successfully created Book";
+export const EDIT_SUCCESSFUL_MESSAGE: string = "Successfully edited Book";
+export const SAVE_FAILED_MESSAGE: string = "Failed to save Book";
+export const FETCH_FAILED_MESSAGE: string = "Failed to fetch Book";
 
 export const getEditStyles = (insets: EdgeInsets) => StyleSheet.create({
     container: {

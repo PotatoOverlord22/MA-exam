@@ -3,7 +3,7 @@ import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
 import { InternalRoutes } from '../../Library/Enums/InternalRoutes';
 import { Insights } from '../Insights/insights';
 import { Reports } from '../Reports/reports';
-import { TransactionList } from '../TransactionList/transactionList';
+import { BookList } from '../BookList/bookList';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -13,10 +13,10 @@ export const TabNavigator: React.FC = (): JSX.Element => {
     return (
         <Tab.Navigator style={{ paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom, flex: 1 }} >
             <Tab.Screen
-                name={InternalRoutes.Transactions}
-                component={TransactionList}
+                name={InternalRoutes.Books}
+                component={BookList}
                 options={{
-                    title: InternalRoutes.Transactions,
+                    title: InternalRoutes.Books,
                     tabBarIcon: "book-open",
                 }}
             />

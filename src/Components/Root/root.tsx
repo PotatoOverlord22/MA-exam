@@ -3,7 +3,7 @@ import { useToast } from "react-native-paper-toast";
 import { ToastMethods } from "react-native-paper-toast/dist/typescript/src/types";
 import { IP_ADDRESS, PORT } from "../../Library/generalConstants";
 import { getSuccessNotificationOptions } from "../../Library/Utils/toastUtils";
-import { Transaction } from "../../Models/Transaction";
+import { Book } from "../../Models/Book";
 import { ParentStackNavigator } from "../Navigation/parentStackNavigator";
 
 export const Root: React.FC = (): JSX.Element => {
@@ -16,8 +16,8 @@ export const Root: React.FC = (): JSX.Element => {
         };
 
         websocket.onmessage = (message: MessageEvent) => {
-            const data: Transaction = JSON.parse(message.data);
-            toaster.show(getSuccessNotificationOptions(`${data.type}: ${data.amount}`));
+            const data: Book = JSON.parse(message.data);
+            toaster.show(getSuccessNotificationOptions(`${data.title}: ${data.author}`));
         };
 
         return () => {

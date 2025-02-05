@@ -4,9 +4,9 @@ import { ScrollView, View } from "react-native";
 import { ActivityIndicator, List, Text } from "react-native-paper";
 import { useToast } from "react-native-paper-toast";
 import { CustomResponse } from "../../Models/CustomResponse";
-import { Transaction } from "../../Models/Transaction";
+import { Book } from "../../Models/Book";
 import { useServices } from "../../Providers/servicesProvider";
-import { entityListStyles } from "../TransactionList/transactionList.styles";
+import { entityListStyles } from "../BookList/bookList.styles";
 
 export const Insights: React.FC = (): JSX.Element => {
     const services = useServices();
@@ -27,7 +27,7 @@ export const Insights: React.FC = (): JSX.Element => {
     const fetchSpendingInsights = async (): Promise<void> => {
         setIsLoading(true);
         try {
-            const response: CustomResponse<Transaction[]> = await services.TransactionService.GetAllCustomPages();
+            const response: CustomResponse<Book[]> = await services.BookService.GetAllCustomPages();
             const categorySpending: Record<string, number> = {};
 
             // Calculate the total spending per category

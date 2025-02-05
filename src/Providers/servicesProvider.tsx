@@ -1,9 +1,9 @@
 import React, { createContext, useContext } from 'react';
-import { TransactionService as TransactionService } from '../Services/transactionService';
+import { BookService as BookService } from '../Services/bookService';
 import { LocalDatabase } from '../Repositories/localDatabase';
 
 export interface IServices {
-    TransactionService: TransactionService;
+    BookService: BookService;
 };
 
 const ServicesContext = createContext<IServices | undefined>(undefined);
@@ -19,10 +19,10 @@ export const useServices = () => {
 
 export const ServicesProvider: React.FC<React.PropsWithChildren> = (props: React.PropsWithChildren) => {
     const localDatabase: LocalDatabase = new LocalDatabase();
-    const entityService: TransactionService = new TransactionService(localDatabase);
+    const entityService: BookService = new BookService(localDatabase);
 
     return (
-        <ServicesContext.Provider value={{ TransactionService: entityService }}>
+        <ServicesContext.Provider value={{ BookService: entityService }}>
             {props.children}
         </ServicesContext.Provider>
     );

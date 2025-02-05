@@ -6,10 +6,10 @@ export const LIST_ITEM_ICON: IconSource = "book";
 export const CREATE_ICON: IconSource = "plus";
 export const EDIT_ICON: IconSource = "pencil";
 export const DELETE_ICON: IconSource = "delete";
-export const FETCH_ALL_ERROR_MESSAGE: string = "Failed to fetch transactions";
-export const FETCH_ALL_SUCCESS_MESSAGE: string = "Successfully fetched transactions";
-export const DELETE_SUCCESS_MESSAGE: string = "Successfully deleted transaction";
-export const DELETE_ERROR_MESSAGE: string = "Failed to deleted transaction";
+export const FETCH_ALL_ERROR_MESSAGE: string = "Failed to fetch Book";
+export const FETCH_ALL_SUCCESS_MESSAGE: string = "Successfully fetched Book";
+export const DELETE_SUCCESS_MESSAGE: string = "Successfully deleted Book";
+export const DELETE_ERROR_MESSAGE: string = "Failed to deleted Book";
 
 export const entityListStyles = StyleSheet.create({
     mainContainer: {

@@ -14,26 +14,25 @@ import { StackNavigatorType } from "../../Library/routeParams";
 import { } from "../../Library/toastConstants";
 import { getErrorNotificationOptions, getSuccessNotificationOptions } from "../../Library/Utils/toastUtils";
 import { CustomResponse } from "../../Models/CustomResponse";
-import { Transaction } from "../../Models/Transaction";
+import { Book } from "../../Models/Book";
 import { IServices, useServices } from "../../Providers/servicesProvider";
-import { CREATE_ICON, DELETE_ICON, DELETE_ERROR_MESSAGE, DELETE_SUCCESS_MESSAGE, EDIT_ICON, FETCH_ALL_ERROR_MESSAGE, FETCH_ALL_SUCCESS_MESSAGE, LIST_BUTTON_SIZE, LIST_ITEM_ICON, entityListStyles } from "./transactionList.styles";
+import { CREATE_ICON, DELETE_ICON, DELETE_ERROR_MESSAGE, DELETE_SUCCESS_MESSAGE, EDIT_ICON, FETCH_ALL_ERROR_MESSAGE, FETCH_ALL_SUCCESS_MESSAGE, LIST_BUTTON_SIZE, LIST_ITEM_ICON, entityListStyles } from "./bookList.styles";
 
 const fetchSuccessToast: ToastOptions = getSuccessNotificationOptions(FETCH_ALL_SUCCESS_MESSAGE);
 const fetchErrorToast: ToastOptions = getErrorNotificationOptions(FETCH_ALL_ERROR_MESSAGE);
 const deleteSuccessToast: ToastOptions = getSuccessNotificationOptions(DELETE_SUCCESS_MESSAGE);
 const deleteErrorToast: ToastOptions = getErrorNotificationOptions(DELETE_ERROR_MESSAGE);
 
-export const TransactionList: React.FC = (): JSX.Element => {
+export const BookList: React.FC = (): JSX.Element => {
     const services: IServices = useServices();
     const navigator: StackNavigatorType = useNavigation<StackNavigatorType>();
     const toaster: ToastMethods = useToast();
-    const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+    const [books, setBooks] = React.useState<Book[]>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [connectionStatus, setConnectionStatus] = React.useState<ConnectionStates>(ConnectionStates.OFFLINE);
 
     React.useEffect((): void => {
         addEventListener((state: NetInfoState): void => {
-            // ROMANEASCA
             setConnectionStatus((prevStatus: ConnectionStates): ConnectionStates => {
                 if (state.isConnected && prevStatus === ConnectionStates.OFFLINE) {
                     return prevStatus;
@@ -55,7 +54,7 @@ export const TransactionList: React.FC = (): JSX.Element => {
     const fetchAllData = async (): Promise<void> => {
         setIsLoading(true);
         try {
-            const serviceResponse: CustomResponse<Transaction[]> = await services.TransactionService.GetAll();
+            const serviceResponse: CustomResponse<Book[]> = await services.BookService.GetAll();
             if (serviceResponse.source === Sources.NETWORK) {
                 setConnectionStatus(ConnectionStates.ONLINE);
                 toaster.show(fetchSuccessToast);
@@ -65,7 +64,7 @@ export const TransactionList: React.FC = (): JSX.Element => {
                 setConnectionStatus(ConnectionStates.LOCAL);
             }
 
-            setTransactions(serviceResponse.data);
+            setBooks(serviceResponse.data);
         }
         catch (error) {
             toaster.show(fetchErrorToast);
@@ -80,19 +79,19 @@ export const TransactionList: React.FC = (): JSX.Element => {
         navigator.navigate(InternalRoutes.Edit, { viewMode: ViewModes.CREATE });
     };
 
-    const onViewDetails = (transaction: Transaction): void => {
-        navigator.navigate(InternalRoutes.Edit, { id: transaction.id, viewMode: ViewModes.VIEW });
+    const onViewDetails = (book: Book): void => {
+        navigator.navigate(InternalRoutes.Edit, { id: book.id, viewMode: ViewModes.VIEW });
     };
 
-    const onEdit = (transaction: Transaction): void => {
-        navigator.navigate(InternalRoutes.Edit, { id: transaction.id, viewMode: ViewModes.EDIT });
+    const onEdit = (book: Book): void => {
+        navigator.navigate(InternalRoutes.Edit, { id: book.id, viewMode: ViewModes.EDIT });
     };
 
-    const onDelete = async (transaction: Transaction): Promise<void> => {
+    const onDelete = async (book: Book): Promise<void> => {
         try {
-            await services.TransactionService.Delete(transaction.id);
+            await services.BookService.Delete(book.id);
             toaster.show(deleteSuccessToast);
-            setTransactions((prev: Transaction[]): Transaction[] => prev.filter((e: Transaction): boolean => e.id !== transaction.id));
+            setBooks((prev: Book[]): Book[] => prev.filter((e: Book): boolean => e.id !== book.id));
         }
         catch (error) {
             toaster.show(deleteErrorToast);
@@ -118,12 +117,12 @@ export const TransactionList: React.FC = (): JSX.Element => {
                 </View>
             ) : (
                 <ScrollView>
-                    {transactions.map((transaction: Transaction): JSX.Element => (
+                    {books.map((book: Book): JSX.Element => (
                         <List.Item
-                            key={transaction.id}
-                            title={transaction.category}
-                            description={transaction.type}
-                            onPress={(): void => onViewDetails(transaction)}
+                            key={book.id}
+                            title={book.title}
+                            description={book.author}
+                            onPress={(): void => onViewDetails(book)}
                             left={(props): JSX.Element => <List.Icon {...props} icon={LIST_ITEM_ICON} />}
                             right={(props): JSX.Element =>
                                 <View style={entityListStyles.iconButtonContainer}>
@@ -131,14 +130,14 @@ export const TransactionList: React.FC = (): JSX.Element => {
                                         {...props}
                                         icon={EDIT_ICON}
                                         size={LIST_BUTTON_SIZE}
-                                        onPress={(): void => onEdit(transaction)}
+                                        onPress={(): void => onEdit(book)}
                                         disabled={connectionStatus !== ConnectionStates.ONLINE}
                                     />
                                     <IconButton
                                         {...props}
                                         icon={DELETE_ICON}
                                         size={LIST_BUTTON_SIZE}
-                                        onPress={(): void => { void onDelete(transaction); }}
+                                        onPress={(): void => { void onDelete(book); }}
                                         disabled={connectionStatus !== ConnectionStates.ONLINE}
                                     />
                                 </View>

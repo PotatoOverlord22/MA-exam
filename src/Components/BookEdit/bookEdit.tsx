@@ -11,18 +11,19 @@ import { ViewModes } from "../../Library/Enums/ViewModes";
 import { EditNavigationProps } from "../../Library/routeParams";
 import { getErrorNotificationOptions, getSuccessNotificationOptions } from "../../Library/Utils/toastUtils";
 import { CustomResponse } from "../../Models/CustomResponse";
-import { Transaction } from "../../Models/Transaction";
+import { Book } from "../../Models/Book";
 import { IServices, useServices } from "../../Providers/servicesProvider";
-import { CANCEL, CREATE_TITLE, CREATE_SUCCESSFUL_MESSAGE, EDIT_TITLE, EDIT_SUCCESSFUL_MESSAGE, getEditStyles, SAVE, SAVE_FAILED_MESSAGE, VIEW_TITLE } from "./transactionEdit.styles";
+import { CANCEL, CREATE_TITLE, CREATE_SUCCESSFUL_MESSAGE, EDIT_TITLE, EDIT_SUCCESSFUL_MESSAGE, getEditStyles, SAVE, SAVE_FAILED_MESSAGE, VIEW_TITLE } from "./bookEdit.styles";
 import { formatDate } from "../../Library/Utils/dateUtils";
 
-const defaultTransaction: Transaction = {
+const defaultBook: Book = {
     id: -1,
-    date: formatDate(new Date()),
-    amount: NaN,
-    type: "",
-    category: "",
-    description: ""
+    title: "",
+    author: "",
+    genre: "",
+    status: "",
+    reviewCount: 0,
+    avgRating: 0,
 };
 
 const createSuccessToast: ToastOptions = getSuccessNotificationOptions(CREATE_SUCCESSFUL_MESSAGE);
@@ -30,34 +31,34 @@ const editSuccessToast: ToastOptions = getSuccessNotificationOptions(EDIT_SUCCES
 const saveFailedToast: ToastOptions = getErrorNotificationOptions(SAVE_FAILED_MESSAGE);
 const fetchFailedToast: ToastOptions = getErrorNotificationOptions(SAVE_FAILED_MESSAGE);
 
-export const TransactionEdit: React.FC<EditNavigationProps> = (props: EditNavigationProps): JSX.Element => {
+export const BookEdit: React.FC<EditNavigationProps> = (props: EditNavigationProps): JSX.Element => {
     const insets: EdgeInsets = useSafeAreaInsets();
     const viewMode: ViewModes = props.route.params.viewMode;
     const toaster: ToastMethods = useToast();
     const services: IServices = useServices();
-    const [transaction, setTransaction] = useState<Transaction>(defaultTransaction);
+    const [book, setBook] = useState<Book>(defaultBook);
     const editStyles = getEditStyles(insets);
 
     React.useEffect((): void => {
-        fetchTransaction();
+        fetchBook();
     }, []);
 
-    const fetchTransaction = async (): Promise<void> => {
+    const fetchBook = async (): Promise<void> => {
         if (!props.route.params.id) {
             return;
         }
 
         try {
-            const response: CustomResponse<Transaction> = await services.TransactionService.Get(props.route.params.id);
-            setTransaction(response.data);
+            const response: CustomResponse<Book> = await services.BookService.Get(props.route.params.id);
+            setBook(response.data);
         }
         catch (error) {
             toaster.show(fetchFailedToast);
         }
     };
 
-    const onInputChange = (field: keyof Transaction, value: string | string[] | number | Date) => {
-        setTransaction((prev) => ({
+    const onInputChange = (field: keyof Book, value: string | string[] | number | Date) => {
+        setBook((prev) => ({
             ...prev,
             [field]: value,
         }));
@@ -67,12 +68,12 @@ export const TransactionEdit: React.FC<EditNavigationProps> = (props: EditNaviga
         try {
             switch (viewMode) {
                 case ViewModes.CREATE:
-                    await services.TransactionService.Create(transaction);
+                    await services.BookService.Create(book);
                     toaster.show(createSuccessToast);
                     props.navigation.navigate(InternalRoutes.TabNavigator);
                     break;
                 case ViewModes.EDIT:
-                    await services.TransactionService.Update(transaction);
+                    await services.BookService.Update(book);
                     toaster.show(editSuccessToast);
                     props.navigation.navigate(InternalRoutes.TabNavigator);
                     break;
@@ -106,41 +107,47 @@ export const TransactionEdit: React.FC<EditNavigationProps> = (props: EditNaviga
                 <Text variant="headlineLarge" style={editStyles.input}>
                     {getViewTitle()}
                 </Text>
-                <DatePickerInput
-                    label="Date"
-                    locale="en"
-                    value={new Date(transaction.date)}
-                    onChange={(date: CalendarDate): void => onInputChange("date", formatDate(date))}
-                    inputMode="start"
+                <TextInput
+                    label={"Title"}
+                    value={book.title}
+                    onChangeText={(text) => onInputChange("title", text)}
+                    style={editStyles.input}
+                    disabled={viewMode === ViewModes.VIEW}
+                />
+                 <TextInput
+                    label="Author"
+                    value={book.author}
+                    onChangeText={(text) => onInputChange("author", text)}
                     style={editStyles.input}
                     disabled={viewMode === ViewModes.VIEW}
                 />
                 <TextInput
-                    label="Amount"
-                    value={transaction.amount ? transaction.amount.toString() : ""}
+                    label={"Genre"}
+                    value={book.genre}
+                    onChangeText={(text) => onInputChange("genre", text)}
+                    style={editStyles.input}
+                    disabled={viewMode === ViewModes.VIEW}
+                />
+                <TextInput
+                    label={"Status"}
+                    value={book.status}
+                    onChangeText={(text) => onInputChange("status", text)}
+                    style={editStyles.input}
+                    disabled={viewMode === ViewModes.VIEW}
+                />
+                <TextInput
+                    label="Review Count"
+                    value={book.reviewCount ? book.reviewCount.toString() : ""}
                     keyboardType="numeric"
-                    onChangeText={(text) => onInputChange("amount", parseFloat(text))}
+                    onChangeText={(text) => onInputChange("reviewCount", parseInt(text))}
                     style={editStyles.input}
                     disabled={viewMode === ViewModes.VIEW}
                 />
                 <TextInput
-                    label={"Type"}
-                    value={transaction.type}
-                    onChangeText={(text) => onInputChange("type", text)}
-                    style={editStyles.input}
-                    disabled={viewMode === ViewModes.VIEW}
-                />
-                <TextInput
-                    label="Category"
-                    value={transaction.category}
-                    onChangeText={(text) => onInputChange("category", text)}
-                    style={editStyles.input}
-                    disabled={viewMode === ViewModes.VIEW}
-                />
-                <TextInput
-                    label={"Description"}
-                    value={transaction.description}
-                    onChangeText={(text) => onInputChange("description", text)}
+                    label="Average Rating"
+                    value={book.reviewCount ? book.avgRating.toString() : ""}
+                    keyboardType="numeric"
+                    onChangeText={(text) => onInputChange("avgRating", parseFloat(text))}
                     style={editStyles.input}
                     disabled={viewMode === ViewModes.VIEW}
                 />
