@@ -57,7 +57,7 @@ export const BookList: React.FC = (): JSX.Element => {
             const serviceResponse: CustomResponse<Book[]> = await services.BookService.GetAll();
             if (serviceResponse.source === Sources.NETWORK) {
                 setConnectionStatus(ConnectionStates.ONLINE);
-                toaster.show(fetchSuccessToast);
+                // toaster.show(fetchSuccessToast);
             }
             else if (serviceResponse.source === Sources.LOCAL) {
                 toaster.show(usingCachedDataNotification);
@@ -133,13 +133,13 @@ export const BookList: React.FC = (): JSX.Element => {
                                         onPress={(): void => onEdit(book)}
                                         disabled={connectionStatus !== ConnectionStates.ONLINE}
                                     />
-                                    <IconButton
+                                    {/* <IconButton
                                         {...props}
                                         icon={DELETE_ICON}
                                         size={LIST_BUTTON_SIZE}
                                         onPress={(): void => { void onDelete(book); }}
                                         disabled={connectionStatus !== ConnectionStates.ONLINE}
-                                    />
+                                    /> */}
                                 </View>
                             }
                         />
@@ -150,7 +150,6 @@ export const BookList: React.FC = (): JSX.Element => {
                 icon={CREATE_ICON}
                 onPress={onCreate}
                 style={entityListStyles.fab}
-                disabled={connectionStatus !== ConnectionStates.ONLINE}
             />
         </View>
     );

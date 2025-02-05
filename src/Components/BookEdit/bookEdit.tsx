@@ -1,8 +1,7 @@
+import { addEventListener, NetInfoState } from '@react-native-community/netinfo';
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
-import { DatePickerInput } from "react-native-paper-dates";
-import { CalendarDate } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 import { useToast } from "react-native-paper-toast";
 import { ToastMethods, ToastOptions } from "react-native-paper-toast/dist/typescript/src/types";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,11 +9,10 @@ import { InternalRoutes } from "../../Library/Enums/InternalRoutes";
 import { ViewModes } from "../../Library/Enums/ViewModes";
 import { EditNavigationProps } from "../../Library/routeParams";
 import { getErrorNotificationOptions, getSuccessNotificationOptions } from "../../Library/Utils/toastUtils";
-import { CustomResponse } from "../../Models/CustomResponse";
 import { Book } from "../../Models/Book";
+import { CustomResponse } from "../../Models/CustomResponse";
 import { IServices, useServices } from "../../Providers/servicesProvider";
-import { CANCEL, CREATE_TITLE, CREATE_SUCCESSFUL_MESSAGE, EDIT_TITLE, EDIT_SUCCESSFUL_MESSAGE, getEditStyles, SAVE, SAVE_FAILED_MESSAGE, VIEW_TITLE } from "./bookEdit.styles";
-import { formatDate } from "../../Library/Utils/dateUtils";
+import { CANCEL, CREATE_SUCCESSFUL_MESSAGE, CREATE_TITLE, EDIT_SUCCESSFUL_MESSAGE, EDIT_TITLE, getEditStyles, SAVE, SAVE_FAILED_MESSAGE, VIEW_TITLE } from "./bookEdit.styles";
 
 const defaultBook: Book = {
     id: -1,
@@ -38,6 +36,13 @@ export const BookEdit: React.FC<EditNavigationProps> = (props: EditNavigationPro
     const services: IServices = useServices();
     const [book, setBook] = useState<Book>(defaultBook);
     const editStyles = getEditStyles(insets);
+    const [isOnline, setIsOnline] = React.useState<boolean>(false);
+
+    React.useEffect((): void => {
+        addEventListener((state: NetInfoState): void => {
+            setIsOnline(state.isConnected ?? false);
+        });
+    }, []);
 
     React.useEffect((): void => {
         fetchBook();
@@ -68,7 +73,12 @@ export const BookEdit: React.FC<EditNavigationProps> = (props: EditNavigationPro
         try {
             switch (viewMode) {
                 case ViewModes.CREATE:
-                    await services.BookService.Create(book);
+                    if (isOnline) {
+                        await services.BookService.Create(book);
+                    }
+                    else {
+                        await services.BookService.CreateOffline(book);
+                    }
                     toaster.show(createSuccessToast);
                     props.navigation.navigate(InternalRoutes.TabNavigator);
                     break;
@@ -114,7 +124,7 @@ export const BookEdit: React.FC<EditNavigationProps> = (props: EditNavigationPro
                     style={editStyles.input}
                     disabled={viewMode === ViewModes.VIEW}
                 />
-                 <TextInput
+                <TextInput
                     label="Author"
                     value={book.author}
                     onChangeText={(text) => onInputChange("author", text)}

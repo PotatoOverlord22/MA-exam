@@ -8,6 +8,7 @@ export class LocalDatabase {
 
     public constructor() {
         this.InitializeDatabase();
+        // this.ResetDatabase();
     }
 
     // Get all books
@@ -65,6 +66,28 @@ export class LocalDatabase {
             } catch (error) {
                 console.log("Error adding book to database", error);
             }
+        }
+    }
+
+    public async AddOffline(book: Book): Promise<void> {
+        const db = await this.GetDatabaseConnection();
+        
+        try {
+            const books: Book[] = await this.GetAll();
+            let maxId: number = -1;
+            for (const book of books) {
+                if (book.id > maxId) {
+                    maxId = book.id;
+                }
+            }
+            maxId++;
+
+            await db.runAsync(
+                `INSERT INTO books (id, title, author, genre, status, reviewCount, avgRating) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+                maxId, book.title, book.author, book.genre, book.status, book.reviewCount, book.avgRating
+            );
+        } catch (error) {
+            console.log("Error adding book to database", error);
         }
     }
 

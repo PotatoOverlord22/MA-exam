@@ -37,7 +37,7 @@ export const ReaderSection: React.FC = (): JSX.Element => {
         try {
             const serviceResponse: CustomResponse<Book[]> = await services.BookService.GetAllCustomPages();
             if (serviceResponse.source === Sources.NETWORK) {
-                toaster.show(fetchSuccessToast);
+                // toaster.show(fetchSuccessToast);
             } else if (serviceResponse.source === Sources.LOCAL) {
                 toaster.show(usingCachedDataNotification);
             }
@@ -60,8 +60,8 @@ export const ReaderSection: React.FC = (): JSX.Element => {
                     {books.map((book) => (
                         <List.Item
                             key={book.id}
-                            title={`${book.title}`}
-                            description={`${book.status}`}
+                            title={`${book.title} by ${book.author}`}
+                            description={`${book.status} - ${book.reviewCount}`}
                             left={(props) => <List.Icon {...props} icon={LIST_ITEM_ICON} />}
                         />
                     ))}

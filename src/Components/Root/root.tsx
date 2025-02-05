@@ -1,3 +1,4 @@
+import { addEventListener, NetInfoState } from '@react-native-community/netinfo';
 import React from "react";
 import { useToast } from "react-native-paper-toast";
 import { ToastMethods } from "react-native-paper-toast/dist/typescript/src/types";
@@ -8,6 +9,14 @@ import { ParentStackNavigator } from "../Navigation/parentStackNavigator";
 
 export const Root: React.FC = (): JSX.Element => {
     const toaster: ToastMethods = useToast();
+    const [isOnline, setIsOnline] = React.useState<boolean>(false);
+
+    React.useEffect((): void => {
+        addEventListener((state: NetInfoState): void => {
+            setIsOnline(state.isConnected ?? false);
+        });
+    }, []);
+
     React.useEffect(() => {
         const websocket = new WebSocket(`ws://${IP_ADDRESS}:${PORT}`);
 
@@ -17,14 +26,14 @@ export const Root: React.FC = (): JSX.Element => {
 
         websocket.onmessage = (message: MessageEvent) => {
             const data: Book = JSON.parse(message.data);
-            toaster.show(getSuccessNotificationOptions(`${data.title}: ${data.author}`));
+            toaster.show(getSuccessNotificationOptions(`${data.title}, ${data.author}, ${data.status}`));
         };
 
         return () => {
             websocket.close();
             console.log("WebSocket connection closed.");
         };
-    }, [toaster]);
+    }, [toaster, isOnline]);
 
     return (
         <ParentStackNavigator />

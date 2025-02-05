@@ -83,6 +83,17 @@ export class BookService {
         }
     }
 
+    public async CreateOffline(book: Book): Promise<void> {
+        console.log('Creating book offline');
+        try {
+            await this.localDatabase.AddOffline(book);
+        }
+        catch (error) {
+            console.log('Failed to create book offline: ', error);
+            throw new Error('Failed to create book offline');
+        }
+    }
+
     public async Update(book: Book): Promise<Book> {
         console.log('Updating book: ', book.id);
         try{
