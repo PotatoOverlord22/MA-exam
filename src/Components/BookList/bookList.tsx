@@ -120,8 +120,8 @@ export const BookList: React.FC = (): JSX.Element => {
                     {books.map((book: Book): JSX.Element => (
                         <List.Item
                             key={book.id}
-                            title={book.title}
-                            description={book.author}
+                            title={`${book.id}: ${book.title}`}
+                            description={`${book.author} - ${book.genre}`}
                             onPress={(): void => onViewDetails(book)}
                             left={(props): JSX.Element => <List.Icon {...props} icon={LIST_ITEM_ICON} />}
                             right={(props): JSX.Element =>

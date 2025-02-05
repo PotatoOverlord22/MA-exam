@@ -8,44 +8,40 @@ import { Book } from "../../Models/Book";
 import { useServices } from "../../Providers/servicesProvider";
 import { entityListStyles } from "../BookList/bookList.styles";
 
-export const Insights: React.FC = (): JSX.Element => {
+export const TopBooks: React.FC = (): JSX.Element => {
     const services = useServices();
     const toaster = useToast();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [topSpendingCategories, setTopSpendingCategories] = useState<{ category: string; totalAmount: number }[]>([]);
+    const [topRatedBooks, setTopRatedBooks] = useState<Book[]>([]);
 
     useEffect(() => {
-        fetchSpendingInsights();
+        fetchTopRatedBooks();
     }, []);
 
     useFocusEffect(
         React.useCallback(() => {
-            fetchSpendingInsights();
+            fetchTopRatedBooks();
         }, [])
     );
 
-    const fetchSpendingInsights = async (): Promise<void> => {
+    const fetchTopRatedBooks = async (): Promise<void> => {
         setIsLoading(true);
         try {
             const response: CustomResponse<Book[]> = await services.BookService.GetAllCustomPages();
-            const categorySpending: Record<string, number> = {};
 
-            // Calculate the total spending per category
-            response.data.forEach((transaction) => {
-                if (transaction.amount) {
-                    categorySpending[transaction.category] = (categorySpending[transaction.category] || 0) + transaction.amount;
-                }
-            });
+            // Filter books with valid rating and review count
+            const filteredBooks = response.data.filter(
+                (book) => book.avgRating !== undefined && book.reviewCount !== undefined
+            );
 
-            // Sort categories by total spending and get the top 3
-            const sortedCategories = Object.entries(categorySpending)
-                .map(([category, totalAmount]) => ({ category, totalAmount }))
-                .sort((a, b) => b.totalAmount - a.totalAmount)
-                .slice(0, 3);
+            // Sort books by rating (descending) and review count (descending)
+            const sortedBooks = filteredBooks
+                .sort((a, b) => b.avgRating - a.avgRating || b.reviewCount - a.reviewCount)
+                .slice(0, 5);
 
-            setTopSpendingCategories(sortedCategories);
+            setTopRatedBooks(sortedBooks);
         } catch (error) {
-            toaster.show({ message: "Error fetching spending insights", type: "error" });
+            toaster.show({ message: "Error fetching top-rated books", type: "error" });
         } finally {
             setIsLoading(false);
         }
@@ -60,14 +56,14 @@ export const Insights: React.FC = (): JSX.Element => {
             ) : (
                 <ScrollView>
                     <Text variant="headlineMedium">
-                        Top 3 Categories by Spending
+                        Top 5 Highest-Rated Books
                     </Text>
-                    {topSpendingCategories.map(({ category, totalAmount }, index) => (
+                    {topRatedBooks.map(({ id, title, avgRating, reviewCount }) => (
                         <List.Item
-                            key={index}
-                            title={category}
-                            description={`Total Spending: $${totalAmount.toFixed(2)}`}
-                            left={(props) => <List.Icon {...props} icon="cash" />}
+                            key={id}
+                            title={title}
+                            description={`Rating: ${avgRating.toFixed(1)} ⭐ | Reviews: ${reviewCount}`}
+                            left={(props) => <List.Icon {...props} icon="book" />}
                         />
                     ))}
                 </ScrollView>

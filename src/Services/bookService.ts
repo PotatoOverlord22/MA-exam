@@ -85,8 +85,14 @@ export class BookService {
 
     public async Update(book: Book): Promise<Book> {
         console.log('Updating book: ', book.id);
-        const response: AxiosResponse<Book> = await axios.put<Book>(`${this._baseUrl}/book/${book.id}`, book);
-        return response.data;
+        try{
+            const response: AxiosResponse<Book> = await axios.put<Book>(`${this._baseUrl}/book`, book);
+            return response.data;
+        }
+        catch (error) {
+            console.log('Failed to update book: ', book.id, error);
+            throw new Error('Failed to update book');
+        }
     }
 
     public async Delete(id: number): Promise<void> {

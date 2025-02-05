@@ -2,6 +2,6 @@ export enum InternalRoutes {
     TabNavigator = "TabNavigator",
     Books = "Books",
     Edit = "Edit",
-    Insights = "Insights",
-    Reports = "Reports"
+    TopBooks = "Top Books",
+    ReadingBookList = "Reader section"
 };
